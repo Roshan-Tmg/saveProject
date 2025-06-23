@@ -1,4 +1,5 @@
-import { GET_USER_PROFILE_REQUEST, LOGIN_USER_REQUEST, REGISTER_USER_REQUEST } from "./ActionType";
+import { FOLLOW_USER_SUCCESS, GET_USER_PROFILE_REQUEST, LOGIN_USER_REQUEST, REGISTER_USER_REQUEST, UPDATE_USER_SUCCESS } from "./ActionType";
+import { LOGIN_USER_SUCCESS, LOGIN_USER_FAILURE, REGISTER_USER_SUCCESS, REGISTER_USER_FAILURE, GET_USER_PROFILE_SUCCESS, GET_USER_PROFILE_FAILURE, LOGOUT_USER, FIND_USER_BY_ID_SUCCESS, FIND_USER_BY_ID_FAILURE } from "./ActionType";
 
 const initialState = {
     user: null,
@@ -18,8 +19,8 @@ export const authReducer = (state = initialState, action) => {
                 error: null,
             }
            
-        case "LOGIN_USER_SUCCESS":
-        case "REGISTER_USER_SUCCESS":
+        case LOGIN_USER_SUCCESS:
+        case REGISTER_USER_SUCCESS:
             return{
                 ...state,
                 loading: false,
@@ -27,21 +28,47 @@ export const authReducer = (state = initialState, action) => {
                 jwt: action.payload,
             }  
             
-        case "GET_USER_PROFILE_SUCCESS":
+        case GET_USER_PROFILE_SUCCESS:
             return {
                 ...state,
                 loading: false,
                 error: null,
                 user: action.payload,
             }
-        case "LOGOUT_USER":
+        // case UPDATE_USER_SUCCESS:
+        //     return {
+        //         ...state,
+        //         loading: false,
+        //         error: null,
+        //         user: action.payload,
+        //         updateUser: true,
+        //     }
+        
+        case UPDATE_USER_SUCCESS:
+        case FIND_USER_BY_ID_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                error: null,
+                findUser: action.payload,
+            }
+
+        case FOLLOW_USER_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                error: null,
+                findUser: action.payload,
+            }
+
+        case LOGOUT_USER:
             return {
                 initialState
             }
 
-        case "LOGIN_USER_FAILURE":
-        case "REGISTER_USER_FAILURE":
-        case "GET_USER_PROFILE_FAILURE":
+        case LOGIN_USER_FAILURE:
+        case REGISTER_USER_FAILURE:
+        case GET_USER_PROFILE_FAILURE:
             return {
                 ...state,
                 loading: false,

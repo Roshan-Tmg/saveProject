@@ -8,6 +8,10 @@ import { useFormik } from 'formik';
 import { Avatar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
+import { updateUserProfile } from '../../Store/Auth/Action';
+import { useDispatch } from 'react-redux';
+import { uploadToCloudinary } from '../../Utils/uploadToCloudnary';
+import { useSelector } from 'react-redux';
 
 const style = {
   position: 'absolute',
@@ -26,10 +30,15 @@ const style = {
 export default function ProfileModel({ open, handleClose }) {
   //   const [open, setOpen] = React.useState(false);
   const [uploading, setUploading] = React.useState(false)
+  const dispatch = useDispatch();
+  const [SelectedImage, setSelectedImage] = React.useState(null);
+  const {auth} = useSelector(store => store);
 
 
   const handleSubmit = (values) => {
+    dispatch(updateUserProfile(values));
     console.log("handleSubmit", values);
+    setSelectedImage(null);
   }
 
   const formik = useFormik({
@@ -44,11 +53,12 @@ export default function ProfileModel({ open, handleClose }) {
 
     onSubmit: handleSubmit
   });
-  const handleImageChange = (event) => {
+  const handleImageChange = async(event) => {
     setUploading(true);
     const { name } = event.target;
-    const file = event.target.files[0];
+    const file = await uploadToCloudinary(event.target.files[0]);
     formik.setFieldValue(name, file);
+    setSelectedImage(file);
     setUploading(false);
 
   }
@@ -104,7 +114,7 @@ export default function ProfileModel({ open, handleClose }) {
                         height: "10rem",
                         border: "4px solid #000",
                       }}
-                      src='https://cdn.pixabay.com/photo/2025/04/21/04/58/guitar-9546520_640.png'
+                      src={auth.user?.image || SelectedImage || "https://cdn.pixabay.com/photo/2025/04/21/04/58/guitar-9546520_640.png"}
 
                     />
 

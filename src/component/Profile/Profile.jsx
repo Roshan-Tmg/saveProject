@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Avatar, Button } from '@mui/material';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -8,7 +8,12 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Box } from '@mui/system';
 import ProfileModel from './ProfileModel';
 // import { Tab, TabContext, TabList, TabPanel } from '@mui/lab';
-import { Tab, Tabs } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { findUserById, folowUserAction } from '../../Store/Auth/Action';
+import { useEffect } from 'react';
+
+
 
 
 function Profile() {
@@ -18,10 +23,19 @@ function Profile() {
     const handleOpenProfileModel = () => setOpenProfileModal(true);
     const handleClose = () => setOpenProfileModal(false);
     const handleBack = () => navigate(-1);
+    const {auth} = useSelector(store => store);
+    const dispatch = useDispatch();
+    const {id}= useParams();
     
     const handleFollowUser = () => {
+        dispatch(folowUserAction(id));
            console.log("Follow user");
        }
+
+
+    useEffect(() => {
+        dispatch(findUserById(id)) 
+    },[id])
     // const handleTabChange = (event, newValue) => {
     //     setTabValue(newValue)
     //     if (newValue===4) {
@@ -39,7 +53,7 @@ function Profile() {
                 <KeyboardBackspaceIcon className='text-black cursor-pointer' onClick={handleBack} />
 
                 <h1 className='py-5 text-xl font-bold opacity-90 ml-5'>
-                    Code with human
+                    {auth?.findUser?.fullName }
                 </h1>
 
             </section>
@@ -51,14 +65,14 @@ function Profile() {
                 <div className='flex justify-between items-start mt-5 h-[5rem]'>
                     <Avatar
                         className='transform -translate-y-24'
-                        alt='Code with human' src='https://cdn.pixabay.com/photo/2025/04/21/04/58/guitar-9546520_640.png'
+                        alt='Code with human' src={auth?.findUser?.image}
                         sx={{
                             width: "10rem",
                             height: "10rem",
                             border: "4px solid #000",
                         }}
                     />
-                    {true ? <Button
+                    {auth.findUser?.req_user ? <Button
                         onClick={handleOpenProfileModel}
                         variant='contained'
                         sx={
@@ -78,44 +92,47 @@ function Profile() {
                                 }
                             }
                         >
-                            {true?"Follow" : "Unfollow"}
+                            {auth.findUser?.followed 
+                            ?"Unfollow" : "Follow"}
                         </Button>}
 
 
                 </div>
                 <div>
                     <div className='flex items-center'> 
-                                <h1 className='font-bold-lg'>Code with human</h1>
+                                <h1 className='font-bold-lg'>{auth?.findUser?.fullName}</h1>
                                 {true &&<img className='m1-2 w-5 h-5' 
                             src="https://media.istockphoto.com/id/1313547780/vector/profile-verification-check-marks-icons-vector-illustration.jpg?s=612x612&amp;w=0&amp;k=20&amp;c=XDWxGC05gd-sTn_cBvlI2aG1onqOdiVdPb0IeFO-Q2M=" />}    
                     </div>
-                    <h1 className='text-gay-500'>@codeWithHuman</h1>
+                    <h1 className='text-gay-500'>@{auth?.findUser?.fullName.split(" ").join("_").toLowerCase()}</h1>
                 </div>
                 <div className='mt-2 space-y-3'>
-                    <p> i am happy</p>
+                    <p> 
+                        {auth?.findUser?.bio}
+                    </p>
                         <div className='py-1 flex space-x-5'>
                             <div className='flex items-center text-gray-500'>
                                 <LocationOnIcon />
                                 <p className='mi-2'>
-                                    Nepal
+                                    {auth?.findUser?.location || "No location specified"}
                                 </p>
                             </div>
                             <div className='flex items-center text-gray-500'>
                                 <CalendarMonthIcon />
-                                <p className='mi-2'>
+                                <p className='ml-2'>
                                     Joined on 2024
                                 </p>
                             </div>
                             <div className='flex items-center space-x-5'>
                                 <div className='flex items-center space-x-1 font-semibold'>
                                     <span>
-                                            10
+                                            {auth?.findUser?.following?.length}
                                         </span>
                                         <span text-gray-500>
                                             following
                                         </span>
                                         <span>
-                                            12
+                                            {auth?.findUser?.followers?.length}
                                         </span>
                                         <span text-gray-500>
                                             followers

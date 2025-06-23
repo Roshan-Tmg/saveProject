@@ -56,7 +56,7 @@ function Navigation() {
                         <div
                             key={item.title || idx}
                             className='cursor-pointer flex items-center space-x-2 hover:bg-gray-100 rounded-md p-2'
-                            onClick={() => item.title === "Profile" ? navigate('/profile/${5}') : navigate(item.path)}
+                            onClick={() => item.title === "Profile" ? navigate(`/profile/${auth.user.id}`) : navigate(item.path)}
                         >
                             {item.icon}
                             <p className='text-sm font-semibold'>{item.title}</p>

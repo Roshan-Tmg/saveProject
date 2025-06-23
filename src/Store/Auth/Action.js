@@ -1,5 +1,6 @@
 import axios from "axios"
-import { API_BASE_URL } from "../../Config/api";
+import { api, API_BASE_URL } from "../../Config/api";
+import { FIND_USER_BY_ID_FAILURE, FIND_USER_BY_ID_SUCCESS, FOLLOW_USER_FAILURE, FOLLOW_USER_SUCCESS, UPDATE_USER_FAILURE, UPDATE_USER_SUCCESS } from "./ActionType";
 
 
 export const loginUser = (loginData) => async (dispatch) => {
@@ -55,6 +56,61 @@ export const gettUserProfile = () => async (dispatch) => {
         // console.error("Login error:", error);
         console.log("Login error response:", error.response);
         dispatch({type: "GET_USER_PROFILE_FAILURE", payload: error.message})
+        
+    }
+}
+
+
+export const findUserById = (userId) => async (dispatch) => {
+    try {
+        const token = localStorage.getItem("jwt");
+        const{data}= await api.get(`/api/users/${userId}`)
+            
+        console.log("User data by ID:", data);
+        dispatch({type: FIND_USER_BY_ID_SUCCESS,
+             payload:data})
+    } catch (error) {
+        // console.error("Login error:", error);
+        console.log("Login error response:", error.response);
+        dispatch({
+            type: FIND_USER_BY_ID_FAILURE
+            , payload: error.message})
+        
+    }
+}
+
+export const updateUserProfile = (reqData) => async (dispatch) => {
+    try {
+        const token = localStorage.getItem("jwt");
+        const{data}= await api.put(`/api/users/update`, reqData)
+            
+        console.log("Update user:", data);
+        dispatch({type: UPDATE_USER_SUCCESS,
+             payload:data})
+    } catch (error) {
+        // console.error("Login error:", error);
+        console.log("Login error response:", error.response);
+        dispatch({
+            type: UPDATE_USER_FAILURE
+            , payload: error.message})
+        
+    }
+}
+
+export const folowUserAction = (userId) => async (dispatch) => {
+    try {
+        const token = localStorage.getItem("jwt");
+        const{data}= await api.put(`/api/users/${userId}/follow`)
+            
+        console.log("followed user:", data);
+        dispatch({type: FOLLOW_USER_SUCCESS,
+             payload:data})
+    } catch (error) {
+        // console.error("Login error:", error);
+        console.log("Login error response:", error.response);
+        dispatch({
+            type:FOLLOW_USER_FAILURE
+            , payload: error.message})
         
     }
 }

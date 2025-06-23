@@ -10,9 +10,15 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { useDispatch } from 'react-redux';
+import { createReTweet, likeTweet } from '../../Store/Twit/Action';
 
-function TweetCard() {
-    const [anchorEl, setAnchorEl] = React.useState(null); // ✅ Correct for .jsx
+
+
+function TweetCard({ item }) {
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const dispatch = useDispatch();
+
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -33,10 +39,13 @@ function TweetCard() {
         // handleClose();
     }
     const handleCreateRetweet = () => {
+        dispatch(createReTweet(item.id));
         console.log("Create Retweet");
         // handleClose();
     }
     const handlelikeTweet = () => {
+
+        dispatch(likeTweet(item.id));
         console.log("Like Tweet");
         // handleClose();
     }
@@ -49,7 +58,7 @@ function TweetCard() {
       </div> */}
             <div className='flex space-x-5'>
                 <Avatar
-                    onClick={() => navigate('/profile/${5}')}
+                    onClick={() => navigate(`/profile/${item?.user.id}`)}
                     className='cursor-pointer'
                     alt='uesrname'
                     src='https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Twitter_bird_logo_2012.svg/24px-Twitter_bird_logo_2012.svg.png'
@@ -57,11 +66,12 @@ function TweetCard() {
                 <div className='w-full'>
                     <div className='flex jsutify-between items-center'>
                         <div className='flex cursor-pointer items-center space-x-2'>
-                            <span className='font-semibold'>Coder bhai</span>
-                            <span className='text-gray-600'>@codebhai .2m</span>
-                            <img className='m1-2 w-5 h-5' 
-                            src="https://media.istockphoto.com/id/1313547780/vector/profile-verification-check-marks-icons-vector-illustration.jpg?s=612x612&amp;w=0&amp;k=20&amp;c=XDWxGC05gd-sTn_cBvlI2aG1onqOdiVdPb0IeFO-Q2M="  >
-                                
+                            
+                            <span className='font-semibold'>{item?.user?.fullName}</span>
+                            <span className='text-gray-600'>@{item?.user?.fullName.split(" ").join("_").toLowerCase()} .2m</span>
+                            <img className='m1-2 w-5 h-5'
+                                src="https://media.istockphoto.com/id/1313547780/vector/profile-verification-check-marks-icons-vector-illustration.jpg?s=612x612&amp;w=0&amp;k=20&amp;c=XDWxGC05gd-sTn_cBvlI2aG1onqOdiVdPb0IeFO-Q2M="  >
+
                             </img>
                         </div>
                         <div>
@@ -90,32 +100,36 @@ function TweetCard() {
                         </div>
                     </div>
                     <div className='mt-2'>
+                        
                         <div className='cursor-pointer'>
-                            <p className='mb-2 p-0'>Nice Content</p>
-                            <img className='w-[28rem] border border-gray-400 p-5 rounded-md' src="https://media.istockphoto.com/id/1145618475/photo/villefranche-on-sea-in-evening.jpg?s=612x612&amp;w=0&amp;k=20&amp;c=vQGj6uK7UUVt0vQhZc9yhRO_oYBEf8IeeDxGyJKbLKI="   ></img>
+                            <p className='mb-2 p-0'>
+                                {item?.content}
+                            </p>
+                            <img className='w-[28rem] border border-gray-400 p-5 rounded-md'
+                                src={item?.image}
+                            ></img>
                         </div>
                         <div className='flex py-5 flex-wrap flex-row space-y-3'>
                             <div className='flex space-x-3  items-center text-gray-600'>
                                 <ChatIcon className='cursor-pointer' onClick={handleOpenReplyModel} />
-                                <p>43</p>
+                                <p>{item?.totalReplies??0}</p>
 
                             </div>
-                            <div className='${true? "text-pink-600" : "text-gray-600"} flex space-x-3  
-                                    items-center'>
+                                <div className={`${item?.retwit ? "text-pink-600" : "text-gray-600"} flex space-x-3 items-center`}>
                                 <RepeatIcon
                                     onClick={handleCreateRetweet}
                                     className='cursor-pointer' />
-                                <p>54</p>
+                                <p>{item?.totalRetweets??0}</p>
 
                             </div>
-                            <div className='${true? "text-pink-600" : "text-gray-600"} flex space-x-3  
-                                    items-center'>
-                                {true ? <FavoriteIcon
+                            <div className={`${item?.liked? "text-pink-600" : "text-gray-600"} flex space-x-3  
+                                    items-center`}>
+                                {item?.liked ? <FavoriteBorderIcon
                                     onClick={handlelikeTweet}
                                     className='cursor-pointer' />
-                                    : <FavoriteBorderIcon
+                                    : <FavoriteIcon
                                         onClick={handlelikeTweet} />}
-                                <p>54</p>
+                                <p>{item?.totalLikes??0}</p>
 
                             </div>
                             <div className='flex space-x-3 items-center text-gray-600'>
@@ -126,11 +140,11 @@ function TweetCard() {
                             <div className='flex space-x-3 items-center text-gray-600'>
 
 
-                            <FileUploadIcon className='cursor-pointer' onClick={handleOpenReplyModel} />
-                           
+                                <FileUploadIcon className='cursor-pointer' onClick={handleOpenReplyModel} />
 
-                        </div>
-                        
+
+                            </div>
+
 
                         </div>
                     </div>
